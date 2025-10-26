@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>DarkVault Pro — Secure File Manager</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script defer src="/static/script.js"></script>
+</head>
+<body>
+  <div class="app">
+    <nav class="nav">
+      <div class="brand">DarkVault <span class="pro">Pro</span></div>
+      <div class="nav-right">
+        <a href="/login" class="btn small">Admin</a>
+      </div>
+    </nav>
+
+    <main class="card">
+      <header class="card-head">
+        <h1>Secure Uploads</h1>
+        <p class="muted">Encrypted-style UI • thumbnails • QR sharing • audit logs</p>
+      </header>
+
+      <form id="uploadForm" method="post" enctype="multipart/form-data" class="upload-grid">
+        <label class="file-input">
+          <input type="file" name="file" id="fileInput" aria-label="Choose file">
+          <div class="file-placeholder">
+            <svg width="36" height="36" viewBox="0 0 24 24" aria-hidden>
+              <path d="M12 2l3 3h4a1 1 0 011 1v13a1 1 0 01-1 1H6a1 1 0 01-1-1V4a1 1 0 011-1h6z" fill="currentColor" />
+            </svg>
+            <div class="file-text">Choose a file or drag it here</div>
+            <div class="file-hint muted">Max 80MB • images auto-thumbnailed</div>
+          </div>
+        </label>
+
+        <div class="actions">
+          <button class="btn primary" type="submit">Upload</button>
+          <div id="selectedName" class="muted small">No file selected</div>
+        </div>
+      </form>
+
+      <section class="recent">
+        <h2>Recent Uploads</h2>
+        <ul class="file-list">
+          {% for f in files %}
+            <li class="file-item">
+              <div class="left">
+                {% if 'image' in f.mime %}
+                  <img src="{{ url_for('thumb_file', filename=f.name + '.png') }}" alt="thumb" class="thumb">
+                {% else %}
+                  <div class="file-icon">📄</div>
+                {% endif %}
+              </div>
+              <div class="meta">
+                <div class="filename">{{ f.name }}</div>
+                <div class="meta-sub">{{ (f.size/1024)|round(1) }} KB • {{ f.mime }}</div>
+              </div>
+              <div class="right">
+                <a class="link" href="{{ url_for('download_file', filename=f.name) }}">Download</a>
+                <a class="link" href="{{ url_for('thumb_file', filename=f.name + '_qr.png') }}">QR</a>
+              </div>
+            </li>
+          {% else %}
+            <li class="empty">No uploads yet — be the first.</li>
+          {% endfor %}
+        </ul>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <small>© HasnainDarkNet • For demo & educational use only</small>
+    </footer>
+  </div>
+</body>
+</html>

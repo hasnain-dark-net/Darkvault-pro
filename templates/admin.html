@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin — DarkVault Pro</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script defer src="/static/script.js"></script>
+</head>
+<body>
+  <div class="app">
+    <nav class="nav">
+      <div class="brand">DarkVault <span class="pro">Pro</span></div>
+      <div class="nav-right">
+        <a href="/logout" class="btn small">Logout</a>
+      </div>
+    </nav>
+
+    <main class="card admin-card">
+      <header class="card-head">
+        <h1>Admin Dashboard</h1>
+        <p class="muted">Manage uploads • audit log • quick actions</p>
+      </header>
+
+      <section>
+        <h3>Files</h3>
+        <table class="table">
+          <thead><tr><th>Name</th><th>Size</th><th>Type</th><th>Actions</th></tr></thead>
+          <tbody>
+            {% for f in files %}
+            <tr>
+              <td class="mono">{{ f.name }}</td>
+              <td>{{ (f.size/1024)|round(1) }} KB</td>
+              <td>{{ f.mime }}</td>
+              <td>
+                <a class="link" href="{{ url_for('download_file', filename=f.name) }}">Download</a>
+                <form method="post" action="{{ url_for('delete_file', filename=f.name) }}" class="inline">
+                  <button class="btn danger" type="submit">Delete</button>
+                </form>
+              </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="4">No files</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h3>Recent Audit Events</h3>
+        <pre class="log">{{ logs[-100:] | tojson(indent=2) }}</pre>
+      </section>
+
+    </main>
+
+    <footer class="footer">
+      <small>Admin • Keep your password secret</small>
+    </footer>
+  </div>
+</body>
+</html>
